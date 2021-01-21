@@ -1,0 +1,14 @@
+sudo: required
+
+services:
+	- docker
+
+before_install:
+	- docker build –t appimg . 
+
+script:
+	- docker run –d –p 82:8080 appimg 
+
+after_success:
+	- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --pasword-stdin
+	- docker push appimg

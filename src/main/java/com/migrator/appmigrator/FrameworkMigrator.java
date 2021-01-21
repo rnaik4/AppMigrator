@@ -1,6 +1,6 @@
 package com.migrator.appmigrator;
 
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -11,13 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import com.migrator.appmigrator.helper.CodeBuilder;
 import com.migrator.appmigrator.util.CommonUtil;
@@ -35,10 +29,27 @@ public class FrameworkMigrator {
 
 	@PostConstruct
 	private void prepareGUI() {
+		try {
+			// Set System L&F
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		}
+		catch (UnsupportedLookAndFeelException e) {
+			// handle exception
+		}
+		catch (ClassNotFoundException e) {
+			// handle exception
+		}
+		catch (InstantiationException e) {
+			// handle exception
+		}
+		catch (IllegalAccessException e) {
+			// handle exception
+		}
+
 		mainFrame = new JFrame();
 		mainFrame.setTitle("Framework Migrator");
-		mainFrame.setSize(700, 600);
-		mainFrame.setLayout(new GridLayout(3, 1));
+		mainFrame.setBounds(300, 90, 600, 400);
+		//mainFrame.getContentPane().setLayout(new GridLayout(4, 1));
 		mainFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent) {
 				System.exit(0);
@@ -48,12 +59,8 @@ public class FrameworkMigrator {
 		statusLabel = new JLabel("", JLabel.CENTER);
 		statusLabel.setSize(450, 200);
 
-		controlPanel = new JPanel();
-		controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
-
 		mainFrame.add(headerLabel);
-		mainFrame.add(controlPanel);
-		mainFrame.add(statusLabel);
+		mainFrame.getContentPane().setLayout(null);
 		displayGUI();
 	}
 
@@ -62,17 +69,43 @@ public class FrameworkMigrator {
 
 		JLabel oldProjectPathLabel = new JLabel(
 				"Input Project(Struts) Directory Path", JLabel.RIGHT);
-		JLabel newProjectPathLabel = new JLabel(
-				"Output Project(Spring) Directory Path", JLabel.RIGHT);
-		JLabel newProjectNameLabel = new JLabel("New Project(Spring) Name",
-				JLabel.RIGHT);
+		oldProjectPathLabel.setSize(200, 20);
+		oldProjectPathLabel.setLocation(48, 100);
+		mainFrame.add(oldProjectPathLabel);
+
 		final JTextField oldProjectPathField = new JTextField(10);
-		final JTextField newProjectPathField = new JTextField(10);
-		JTextField newProjectNameField = new JTextField(10);
-		newProjectNameField.setText("SpringBootApp"+ CommonUtil.getRandomNum());
+		oldProjectPathField.setSize(200, 20);
+		oldProjectPathField.setLocation(280, 100);
+		mainFrame.add(oldProjectPathField);
 
 		JButton btnBrowse = new JButton("Browse");
-		btnBrowse.setBounds(10, 41, 87, 23);
+		btnBrowse.setBounds(10, 41, 87, 50);
+		btnBrowse.setSize(90, 30);
+		btnBrowse.setLocation(480, 100);
+		mainFrame.add(btnBrowse);
+
+		JLabel newProjectNameLabel = new JLabel("New Project(Spring) Name",
+				JLabel.RIGHT);
+		newProjectNameLabel.setSize(150, 20);
+		newProjectNameLabel.setLocation(60, 140);
+		mainFrame.add(newProjectNameLabel);
+
+		JTextField newProjectNameField = new JTextField(10);
+		newProjectNameField.setSize(150, 20);
+		newProjectNameField.setLocation(280, 140);
+		mainFrame.add(newProjectNameField);
+
+		JLabel newProjectPathLabel = new JLabel(
+				"Output Project(Spring) Directory Path", JLabel.LEFT);
+		newProjectPathLabel.setSize(250, 20);
+		newProjectPathLabel.setLocation(60, 180);
+		mainFrame.add(newProjectPathLabel);
+
+		JTextField newProjectPathField = new JTextField(10);
+		newProjectPathField.setSize(150, 20);
+		newProjectPathField.setLocation(280, 180);
+		mainFrame.add(newProjectPathField);
+		//newProjectNameField.setText("SpringBootApp"+ CommonUtil.getRandomNum());
 
 		btnBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -104,14 +137,9 @@ public class FrameworkMigrator {
 			}
 		});
 
-		controlPanel.add(oldProjectPathLabel);
-		controlPanel.add(oldProjectPathField);
-		controlPanel.add(btnBrowse);
-		controlPanel.add(newProjectNameLabel);
-		controlPanel.add(newProjectNameField);
-		controlPanel.add(newProjectPathLabel);
-		controlPanel.add(newProjectPathField);
-		controlPanel.add(migrateBtn);
+		migrateBtn.setSize(90, 40);
+		migrateBtn.setLocation(60, 220);
+		mainFrame.add(migrateBtn);
 		mainFrame.setVisible(true);
 	}
 

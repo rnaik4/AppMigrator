@@ -1,0 +1,14 @@
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\AppMigratorApplication.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\util\CommonUtil.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\helper\MigratorActionHelper.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\parser\BeanParser.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\parser\ActionBeanParser.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\helper\CodeBuilder.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\parser\FormBeanParser.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\helper\BeanHelper.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\parser\XmlParser.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\SourceMigrateAction.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\util\FileUtil.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\FrameworkMigrator.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\parser\JspParser.java
+C:\aws-labs\travis\AppMigrator\src\main\java\com\migrator\appmigrator\util\Constants.java

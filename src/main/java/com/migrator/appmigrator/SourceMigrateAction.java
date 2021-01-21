@@ -8,14 +8,12 @@ import com.migrator.appmigrator.parser.XmlParser;
 import com.migrator.appmigrator.util.CommonUtil;
 import com.migrator.appmigrator.util.Constants;
 import com.migrator.appmigrator.util.FileUtil;
-import japa.parser.ParseException;
+
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +57,7 @@ public class SourceMigrateAction {
 					beanHelper.setOldPackageInfo(currentPackage);
 					beanHelper.setDependentForms(MigratorActionHelper.findAllDependendForms(file,inputProjectPath));
 					beansInfo.add(beanHelper);
-				}else{
+				} else{
 					BeanHelper beanHelper=new BeanHelper();
 					beanHelper.setDependentForms(MigratorActionHelper.findAllDependendForms(file,inputProjectPath));
 					beansInfo.add(beanHelper);
@@ -67,13 +65,16 @@ public class SourceMigrateAction {
 				
 			}
 			
-			if(isActionOnly && !isFormOnly){
+			if(isActionOnly && !isFormOnly && currentPackage.length() > 0){
+				System.out.println("PKG : "+currentPackage);
+				currentPackage = currentPackage.replace("\\",".");
 				return currentPackage.substring(0, currentPackage.lastIndexOf('.'))+"."+"controller";
 			}else if(isFormOnly && !isActionOnly){
+				currentPackage = currentPackage.replace("\\",".");
 				return currentPackage.substring(0, currentPackage.lastIndexOf('.'))+"."+"command";
 			}
 			
-		} catch (IOException | ParseException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -135,6 +136,24 @@ public class SourceMigrateAction {
 			if(!file.getName().startsWith(".") && file.isFile() && file.getName().endsWith(".java")){
 				System.out.println("Copying : "+file.getName()+":"+newPackagePath);
 				new MigratorActionHelper().parseAndProcess(file, beansInfo,newPackagePath,errors);
+			}
+		}
+
+		File srcfile = new File(inputProjectPath+"/src/");
+		destPackageAppPath = outputAppPath + "/src/main/java/com/hack";
+		Collection<File> srcFiles = FileUtils.listFiles(srcfile, null, true);
+		for(File file2 : srcFiles){
+			System.out.println("Src file : "+file2.getName());
+			if(!file2.getName().startsWith(".") && file2.isFile() && file2.getName().endsWith(".java")){
+				System.out.println("Copying java : "+file2.getName()+":"+newPackagePath);
+				CommonUtil.copyFile(destPackageAppPath, file2);
+			} else if(file2.getName().endsWith(".jsp")){
+				destPackageAppPath = outputAppPath + "/src/" + Constants.JSP_PATH;
+				CommonUtil.copyFile(destPackageAppPath, file2);
+			}else if(file2.getName().endsWith("html")) {
+				System.out.println("Its html file : "+file2.getName());
+				destPackageAppPath = outputAppPath + "/src/" + Constants.STATIC_PATH;
+				CommonUtil.copyFile(destPackageAppPath, file2);
 			}
 		}
 
