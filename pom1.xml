@@ -17,6 +17,10 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<struts2.version>2.5.26</struts2.version>
+		<log4j2.version>2.13.3</log4j2.version>
+		<jetty-plugin.version>9.4.35.v20201120</jetty-plugin.version>
 	</properties>
 
 	<dependencies>
@@ -33,48 +37,33 @@
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.opensymphony/xwork -->
-		<dependency>
-			<groupId>com.opensymphony</groupId>
-			<artifactId>xwork</artifactId>
-			<version>2.1.2</version>
-		</dependency>
 
-		<!-- JSTL -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-		</dependency>
-
-		<!-- Need this to compile JSP -->
-		<dependency>
-			<groupId>org.apache.tomcat.embed</groupId>
-			<artifactId>tomcat-embed-jasper</artifactId>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- Need this to compile JSP -->
-		<dependency>
-			<groupId>org.eclipse.jdt.core.compiler</groupId>
-			<artifactId>ecj</artifactId>
-			<version>4.6.1</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<!-- Optional, for bootstrap -->
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>bootstrap</artifactId>
-			<version>3.3.7</version>
+			<groupId>org.apache.struts</groupId>
+			<artifactId>struts2-spring-plugin</artifactId>
+			<version>${struts2.version}</version>
 		</dependency>
 
 	</dependencies>
+
 	<build>
+		<finalName>${artifactId}</finalName>
 		<plugins>
-			<!-- Package as an executable jar/war -->
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty-plugin.version}</version>
+				<configuration>
+					<webApp>
+						<contextPath>/${project.artifactId}</contextPath>
+					</webApp>
+					<stopKey>CTRL+C</stopKey>
+					<stopPort>8999</stopPort>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<scanTargets>
+						<scanTarget>src/main/webapp/WEB-INF/web.xml</scanTarget>
+					</scanTargets>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

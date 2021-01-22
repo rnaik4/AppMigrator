@@ -4,8 +4,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Scanner;
 
+import com.migrator.appmigrator.util.CommonUtil;
+import com.migrator.appmigrator.util.Constants;
 import com.migrator.appmigrator.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.jdom2.Document;
@@ -52,6 +56,50 @@ public class XmlParser {
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	public static void processWebAndContextConfig(String destinationPath) {
+			try {
+				boolean found = false;
+				boolean appCtxt = false;
+				destinationPath = destinationPath+ "/src/" + Constants.WEBXML_PATH;
+				System.out.println("In process config : "+destinationPath);
+				List<String> files = FileUtil.findFiles(Paths.get(destinationPath), "xml");
+				for(String file : files) {
+					if(file.contains("web.xml")) {
+						File webFile = new File(file);
+						SAXBuilder builder = new SAXBuilder();
+						Document doc = (Document) builder.build(file);
+						Element webAppNode = doc.getRootElement();
+
+						for(Element element : webAppNode.getChildren()) {
+							if(element.getName().equals("listener"))
+								found = true;
+						}
+						if(!found){
+							System.out.println("null listener");
+							Element listenerElement = new Element("listener");
+							Element listenerClass = new Element("listener-class");
+							listenerClass.setText(Constants.SPRING_LISTENER);
+							listenerElement.addContent(listenerClass);
+							webAppNode.addContent(listenerElement);
+						}
+						XMLOutputter xmlOutput = new XMLOutputter();
+						xmlOutput.setFormat(Format.getPrettyFormat());
+						xmlOutput.output(doc, new FileWriter(destinationPath + "/" + webFile.getName()));
+						System.out.println("Donce : "+destinationPath + "/" + webFile.getName());
+					} else if(file.contains("applicationContext")) {
+						appCtxt = true;
+					}
+				}
+				if(!appCtxt) {
+					String filePath= "./src/generatedfiles/applicationContext.xml";
+					CommonUtil.copyFile(destinationPath, new File(filePath));
+				}
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 	}
 
 	public static void displayFile(File file) throws Exception {
@@ -102,6 +150,12 @@ public class XmlParser {
 					}
 				}
 			}
+
+			/*if(webAppNode.getChildren("listener") == null) {
+				Element listenerElement = new Element("listener");
+				Element listenerClass = new Element(Constants.SPRING_LISTENER);
+				listenerElement.addContent(listenerClass);
+			}*/
 
 			webAppNode.removeChildren("jsp-config", webAppNode.getNamespace());
 

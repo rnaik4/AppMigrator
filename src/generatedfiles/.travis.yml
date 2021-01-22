@@ -1,14 +1,16 @@
 sudo: required
+language: bash
 
-services:
-	- docker
-
-before_install:
-	- docker build –t appimg . 
-
-script:
-	- docker run –d –p 82:8080 appimg 
+jobs:
+  include:
+    - stage: build docker image
+      script:
+      - pip install --user awscli
+      - docker login --username $DOCKER_ID --password $DOCKER_PASSWORD
+      - docker build -t springimg .
+      - docker images
+      - docker tag springimg:latest $DOCKER_ID/springimg:latest
+      - docker push $DOCKER_ID/springimg:latest
 
 after_success:
-	- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --pasword-stdin
-	- docker push appimg
+- /bin/bash ecs_deploy.sh -c $CLUSTER_NAME -n $SERVICE_NAME -i $DOCKER_ID/springimg:latest

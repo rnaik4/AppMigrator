@@ -48,29 +48,24 @@ public class FrameworkMigrator {
 
 		mainFrame = new JFrame();
 		mainFrame.setTitle("Framework Migrator");
-		mainFrame.setBounds(300, 90, 600, 400);
-		//mainFrame.getContentPane().setLayout(new GridLayout(4, 1));
+		mainFrame.setBounds(300, 90, 600, 300);
 		mainFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent) {
 				System.exit(0);
 			}
 		});
-		headerLabel = new JLabel("", JLabel.CENTER);
-		statusLabel = new JLabel("", JLabel.CENTER);
-		statusLabel.setSize(450, 200);
-
+		headerLabel = new JLabel("Migrator Inputs", JLabel.CENTER);
 		mainFrame.add(headerLabel);
 		mainFrame.getContentPane().setLayout(null);
 		displayGUI();
 	}
 
 	public void displayGUI() {
-		headerLabel.setText("Migrator Inputs");
 
 		JLabel oldProjectPathLabel = new JLabel(
 				"Input Project(Struts) Directory Path", JLabel.RIGHT);
 		oldProjectPathLabel.setSize(200, 20);
-		oldProjectPathLabel.setLocation(48, 100);
+		oldProjectPathLabel.setLocation(41, 100);
 		mainFrame.add(oldProjectPathLabel);
 
 		final JTextField oldProjectPathField = new JTextField(10);
@@ -84,28 +79,46 @@ public class FrameworkMigrator {
 		btnBrowse.setLocation(480, 100);
 		mainFrame.add(btnBrowse);
 
-		JLabel newProjectNameLabel = new JLabel("New Project(Spring) Name",
+		/*JLabel newProjectNameLabel = new JLabel("New Project(Spring) Name",
 				JLabel.RIGHT);
 		newProjectNameLabel.setSize(150, 20);
 		newProjectNameLabel.setLocation(60, 140);
-		mainFrame.add(newProjectNameLabel);
+		mainFrame.add(newProjectNameLabel);*/
 
-		JTextField newProjectNameField = new JTextField(10);
+		/*JTextField newProjectNameField = new JTextField(10);
 		newProjectNameField.setSize(150, 20);
 		newProjectNameField.setLocation(280, 140);
-		mainFrame.add(newProjectNameField);
+		mainFrame.add(newProjectNameField);*/
 
 		JLabel newProjectPathLabel = new JLabel(
 				"Output Project(Spring) Directory Path", JLabel.LEFT);
-		newProjectPathLabel.setSize(250, 20);
-		newProjectPathLabel.setLocation(60, 180);
+		newProjectPathLabel.setSize(200, 20);
+		newProjectPathLabel.setLocation(52, 130);
 		mainFrame.add(newProjectPathLabel);
 
 		JTextField newProjectPathField = new JTextField(10);
-		newProjectPathField.setSize(150, 20);
-		newProjectPathField.setLocation(280, 180);
+		newProjectPathField.setSize(200, 20);
+		newProjectPathField.setLocation(280, 130);
 		mainFrame.add(newProjectPathField);
-		//newProjectNameField.setText("SpringBootApp"+ CommonUtil.getRandomNum());
+
+		JButton btnOutPutBrowse = new JButton("Browse");
+		btnOutPutBrowse.setBounds(10, 41, 87, 50);
+		btnOutPutBrowse.setSize(90, 30);
+		btnOutPutBrowse.setLocation(480, 130);
+		mainFrame.add(btnOutPutBrowse);
+
+		btnOutPutBrowse.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fileChooser = new JFileChooser();
+				fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fileChooser.setAcceptAllFileFilterUsed(false);
+				int rVal = fileChooser.showOpenDialog(null);
+				if (rVal == JFileChooser.APPROVE_OPTION) {
+					newProjectPathField.setText(fileChooser.getSelectedFile()
+							.toString());
+				}
+			}
+		});
 
 		btnBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -127,24 +140,23 @@ public class FrameworkMigrator {
 		migrateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String path = newProjectPathField.getText();
-				String name = newProjectNameField.getText();
+				//String name = newProjectNameField.getText();
 				String inputPath = oldProjectPathField.getText();
 				if (StringUtils.isNotBlank(path)
-						&& StringUtils.isNotBlank("name")
 						&& StringUtils.isNotBlank("inputPath")) {
-					process(path, name, inputPath);
+					process(path, inputPath);
 				}
 			}
 		});
 
 		migrateBtn.setSize(90, 40);
-		migrateBtn.setLocation(60, 220);
+		migrateBtn.setLocation(60, 160);
 		mainFrame.add(migrateBtn);
 		mainFrame.setVisible(true);
 	}
 
-	public void process(String path, String projectName, String inputAppPath) {
-
+	public void process(String path, String inputAppPath) {
+		String projectName = inputAppPath.substring(inputAppPath.lastIndexOf("\\")+1, inputAppPath.length());
 		String outputAppPath = path + projectName;
 
 		try {
@@ -183,24 +195,16 @@ public class FrameworkMigrator {
 					}
 				}
 			}
-			// 1.4 copying spring related libraries
-			/*String sourcePath = "./config/spring/lib";
-			String destinationPath = outputAppPath + "/WebContent/WEB-INF/lib";
 
-			FileUtils.copyDirectory(new File(sourcePath), new File(
-					destinationPath));*/
-
-			// Step 2: Starts analyzing input project
-			//CodeBuilder.generateSpringBootEntryPoint();
-
+			System.out.println("input app path : "+inputAppPath);
 			File[] projectDirs = new File(inputAppPath)
 					.listFiles(new FileFilter() {
 						@Override
 						public boolean accept(File file) {
 							return file.isDirectory()
 									&& (file.getName().equalsIgnoreCase("src") || file
-											.getName().equalsIgnoreCase(
-													"webapp"));
+									.getName().equalsIgnoreCase(
+											"webapp"));
 						}
 					});
 
@@ -222,7 +226,7 @@ public class FrameworkMigrator {
 										new SourceMigrateAction()
 												.processSourceFiles(folder,
 														inputAppPath,
-														outputAppPath);
+														outputAppPath,projectName);
 
 									}
 								}

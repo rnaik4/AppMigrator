@@ -24,3 +24,4 @@ com\migrator\appmigrator\util\CommonUtil.class
 com\migrator\appmigrator\parser\ActionBeanParser$1.class
 com\migrator\appmigrator\parser\FormBeanParser$FieldDeclarationVisitor.class
 com\migrator\appmigrator\parser\FormBeanParser$ClassDeclarationVisitor.class
+com\migrator\appmigrator\FrameworkMigrator$5.class

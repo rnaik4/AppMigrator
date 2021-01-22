@@ -9,11 +9,24 @@ import com.migrator.appmigrator.util.CommonUtil;
 import com.migrator.appmigrator.util.Constants;
 import com.migrator.appmigrator.util.FileUtil;
 
+import org.apache.commons.io.FileUtils;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -66,7 +79,6 @@ public class SourceMigrateAction {
 			}
 			
 			if(isActionOnly && !isFormOnly && currentPackage.length() > 0){
-				System.out.println("PKG : "+currentPackage);
 				currentPackage = currentPackage.replace("\\",".");
 				return currentPackage.substring(0, currentPackage.lastIndexOf('.'))+"."+"controller";
 			}else if(isFormOnly && !isActionOnly){
@@ -79,12 +91,9 @@ public class SourceMigrateAction {
 			e.printStackTrace();
 		}
 		return currentPackage;
-		
 	}
-	
-	
-	
-	private static void visitAndProcessAllFiles(String dirName, File dir, String oldPackagePath, String newPackagePath, String inputProjectPath, String outputAppPath, List<BeanHelper> beansInfo, ArrayList<String> errors) throws IOException{
+
+	private static void visitAndProcessAllFiles(String dirName, File dir, String oldPackagePath, String newPackagePath, String inputProjectPath, String outputAppPath, List<BeanHelper> beansInfo, ArrayList<String> errors,String projectName) throws IOException{
 		
 		String sourcePackageAppPath=inputProjectPath+"/src/";
 		String destPackageAppPath=outputAppPath+"/src/";
@@ -102,7 +111,6 @@ public class SourceMigrateAction {
 			File [] files = dir.listFiles();
 			for(File file : files) {
 				if(file.isFile()) {
-					System.out.println("RESOURCE file : " + file.getName());
 					if (file.getName().endsWith("js")) {
 						destPackageAppPath = outputAppPath + "/src/" + Constants.JS_RESOURCE_PATH;
 					} else if (file.getName().endsWith("css")) {
@@ -111,30 +119,13 @@ public class SourceMigrateAction {
 					CommonUtil.copyFile(destPackageAppPath, file);
 				}
 			}
-		} else if(dirName.equalsIgnoreCase(Constants.WEBAPP_DIR)) {
-			File [] files = dir.listFiles();
-			for(File file : files) {
-				System.out.println("web file : " + file.getName());
-				if (file.getName().endsWith("jsp")) {
-					try {
-						String name = file.getName().substring(0, file.getName().indexOf("."));
-						name = name.substring(0, 1).toUpperCase()+name.substring(1, name.length());
-						CodeBuilder.generateController(name);
-					}catch(Exception e) {
-						e.printStackTrace();
-					}
-					destPackageAppPath = outputAppPath + "/src/" + Constants.JSP_PATH;
-					CommonUtil.copyFile(destPackageAppPath, file);
-				}
-			}
 		}
+
 		//FileUtils.copyDirectory(sourceDir, destDir);
 		//3.Goto new path
 		File [] files = destDir.listFiles();
 		for(File file: files){
-			System.out.println("File 1 : "+file.getName());
 			if(!file.getName().startsWith(".") && file.isFile() && file.getName().endsWith(".java")){
-				System.out.println("Copying : "+file.getName()+":"+newPackagePath);
 				new MigratorActionHelper().parseAndProcess(file, beansInfo,newPackagePath,errors);
 			}
 		}
@@ -143,52 +134,45 @@ public class SourceMigrateAction {
 		destPackageAppPath = outputAppPath + "/src/main/java/com/hack";
 		Collection<File> srcFiles = FileUtils.listFiles(srcfile, null, true);
 		for(File file2 : srcFiles){
-			System.out.println("Src file : "+file2.getName());
 			if(!file2.getName().startsWith(".") && file2.isFile() && file2.getName().endsWith(".java")){
-				System.out.println("Copying java : "+file2.getName()+":"+newPackagePath);
+				destPackageAppPath = outputAppPath + "/src/main/java/com/hack";
 				CommonUtil.copyFile(destPackageAppPath, file2);
 			} else if(file2.getName().endsWith(".jsp")){
 				destPackageAppPath = outputAppPath + "/src/" + Constants.JSP_PATH;
 				CommonUtil.copyFile(destPackageAppPath, file2);
-			}else if(file2.getName().endsWith("html")) {
-				System.out.println("Its html file : "+file2.getName());
+			} else if(file2.getName().equalsIgnoreCase("applicationContext.xml")||file2.getName().equalsIgnoreCase("web.xml")) {
+				destPackageAppPath = outputAppPath + "/src/" + Constants.WEBXML_PATH;
+				CommonUtil.copyFile(destPackageAppPath, file2);
+			} else if(file2.getName().endsWith("html")) {
 				destPackageAppPath = outputAppPath + "/src/" + Constants.STATIC_PATH;
+				CommonUtil.copyFile(destPackageAppPath, file2);
+			} else if(file2.getName().equalsIgnoreCase("struts.xml")) {
+				destPackageAppPath = outputAppPath + "/src/" + Constants.APPROP_RESOURCE_PATH;
 				CommonUtil.copyFile(destPackageAppPath, file2);
 			}
 		}
 
-		sourcePackageAppPath= "./src/generatedfiles/com/hack";
-		sourceDir=new File(sourcePackageAppPath);
-		files = sourceDir.listFiles();
-		destPackageAppPath = outputAppPath + "/src/main/java/com/hack";
-		for(File file : files) {
-			System.out.println("File 2 : "+file.getName());
-			if(!file.getName().startsWith(".") && file.isFile())
-			{
-				if(file.getName().endsWith(".java")) {
-					System.out.println("Copying 2 : " + file.getName() + ":" + newPackagePath);
-					CommonUtil.copyFile(destPackageAppPath, file);
-					file.delete();
-				}
-			}
-		}
+		XmlParser.processWebAndContextConfig(outputAppPath);
 
 		sourcePackageAppPath= "./src/generatedfiles/";
 		sourceDir=new File(sourcePackageAppPath);
 		files = sourceDir.listFiles();
 		destPackageAppPath = outputAppPath + "/src/main/java/com/hack";
 		for(File file : files) {
-			System.out.println("File 2 : "+file.getName());
-			if(!file.getName().startsWith(".") && file.isFile())
+			if(file.isFile())
 			{
-				if (file.getName().endsWith("txt")) {
-					File rnFile = new File(file.getName().substring(0, file.getName().indexOf("."))+".java");
-					System.out.println("Entry file name : "+destPackageAppPath);
-					CommonUtil.copyFile(destPackageAppPath, file);
+				if (file.getName().equalsIgnoreCase("Dockerfile") ||file.getName().contains("travis")
+				|| file.getName().contains("ecs")) {
+					CommonUtil.copyFile(outputAppPath, file);
+
 					try {
-						CommonUtil.renameFile(destPackageAppPath,  rnFile);
-					}catch (Exception ex) {
-						ex.printStackTrace();
+						Path path = Paths.get(outputAppPath+"/"+file.getName());
+						Stream<String> lines = Files.lines(path);
+						List <String> replaced = lines.map(line -> line.replaceAll("java-webapp", projectName)).collect(Collectors.toList());
+						Files.write(path, replaced);
+						lines.close();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -209,7 +193,7 @@ public class SourceMigrateAction {
 
 	}
 
-	public  ArrayList<String> processSourceFiles(File dir,String inputProjectPath,String outputAppPath){
+	public  ArrayList<String> processSourceFiles(File dir,String inputProjectPath,String outputAppPath,String projectName){
 		ArrayList<String> errorMessgs=new ArrayList<String>();
 			try {
 				
@@ -225,7 +209,7 @@ public class SourceMigrateAction {
 				if(doProcess){
 					String currentPackageName=getCurrentPackageName(dir.getCanonicalPath());
 					String newPackageName=getNewPackageName(dir.getName(), currentPackageName,dir.getCanonicalPath(),inputProjectPath);
-					visitAndProcessAllFiles(dir.getName(), dir, currentPackageName,newPackageName,inputProjectPath,outputAppPath,beansInfo,errorMessgs);
+					visitAndProcessAllFiles(dir.getName(), dir, currentPackageName,newPackageName,inputProjectPath,outputAppPath,beansInfo,errorMessgs,projectName);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

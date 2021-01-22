@@ -9,4 +9,7 @@ public class Constants {
     public static String STATIC_PATH = "main/resources/static";
     public static String APPROP_RESOURCE_PATH = "main/resources";
     public static String JSP_PATH = "main/webapp/WEB-INF/jsp";
+    public static String WEBXML_PATH = "main/webapp/WEB-INF";
+    public static String SPRING_LISTENER = "org.springframework.web.context.ContextLoaderListener";
+
 }
