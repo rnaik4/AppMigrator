@@ -11,6 +11,7 @@ com\migrator\appmigrator\parser\JspParser.class
 com\migrator\appmigrator\util\CommonUtil$1.class
 com\migrator\appmigrator\helper\BeanHelper.class
 com\migrator\appmigrator\SourceMigrateAction.class
+com\migrator\appmigrator\FrameworkMigrator$2$1.class
 com\migrator\appmigrator\parser\ActionBeanParser$MethodChangerVisitor.class
 com\migrator\appmigrator\parser\ActionBeanParser.class
 com\migrator\appmigrator\parser\FormBeanParser.class
@@ -24,4 +25,3 @@ com\migrator\appmigrator\util\CommonUtil.class
 com\migrator\appmigrator\parser\ActionBeanParser$1.class
 com\migrator\appmigrator\parser\FormBeanParser$FieldDeclarationVisitor.class
 com\migrator\appmigrator\parser\FormBeanParser$ClassDeclarationVisitor.class
-com\migrator\appmigrator\FrameworkMigrator$5.class

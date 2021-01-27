@@ -18,5 +18,7 @@ public class AppMigratorApplication {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = new SpringApplicationBuilder(AppMigratorApplication.class).headless(false).run(args);
 		FrameworkMigrator migrator = new FrameworkMigrator();
+		migrator.setLocationRelativeTo(null);
+		migrator.setVisible(true);
 	}
 }
