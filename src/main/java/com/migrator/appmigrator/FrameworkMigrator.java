@@ -95,6 +95,7 @@ public class FrameworkMigrator extends JFrame {
 			}
 		});
 
+
 		JButton entriesButton = new JButton("Create Entries");
 		gridBagConstraints = new java.awt.GridBagConstraints();
 		gridBagConstraints.gridx = 0;
@@ -110,7 +111,9 @@ public class FrameworkMigrator extends JFrame {
 				List<JTextField> inputFields =new ArrayList<JTextField>();
 				map.put("fields", inputFields);
 
+				int j=0;
 				for(int i=0;i < Integer.parseInt(value); i++) {
+
 					JLabel inputLabel = new JLabel("Input project path:");
 					JTextField field = new JTextField();
 					field.putClientProperty("id", "id"+i);
@@ -154,33 +157,35 @@ public class FrameworkMigrator extends JFrame {
 							}
 						}
 					});
-					pack();
-				}
-			}
-		});
+					if(i == Integer.parseInt(value)-1) {
+						JButton migrateButton = new JButton("Migrate");
+						gridBagConstraints = new java.awt.GridBagConstraints();
+						gridBagConstraints.gridx = 0;
+						gridBagConstraints.gridy = i+5;
+						gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
+						gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+						getContentPane().add(migrateButton, gridBagConstraints);
+						migrateButton.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								List<JTextField> fields = map.get("fields");
+								for(JTextField field : fields) {
+									String inputPath = field.getText();
+									String newPath = outputPathField.getText();
 
-		JButton migrateButton = new JButton("Migrate");
-		gridBagConstraints = new java.awt.GridBagConstraints();
-		gridBagConstraints.gridx = 1;
-		gridBagConstraints.gridy = 3;
-		gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
-		gridBagConstraints.insets = new java.awt.Insets(5, -80, 0, 0);
-		getContentPane().add(migrateButton, gridBagConstraints);
-		migrateButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				List<JTextField> fields = map.get("fields");
-				for(JTextField field : fields) {
-					String inputPath = field.getText();
-					String newPath = outputPathField.getText();
-
-					if (StringUtils.isNotBlank(inputPath)
-							&& StringUtils.isNotBlank(newPath)) {
-						process(newPath, inputPath);
+									if (StringUtils.isNotBlank(inputPath)
+											&& StringUtils.isNotBlank(newPath)) {
+										process(newPath, inputPath);
+									}
+								}
+							}
+						});
 					}
 				}
+				pack();
 			}
 		});
+
 		pack();
 	}
 
