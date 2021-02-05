@@ -136,6 +136,9 @@ public class SourceMigrateAction {
 		for(File file2 : srcFiles){
 			if(!file2.getName().startsWith(".") && file2.isFile() && file2.getName().endsWith(".java")){
 				destPackageAppPath = outputAppPath + "/src/main/java/com/hack";
+				String fileString = FileUtils.readFileToString(file2);
+				fileString = fileString.replace(Constants.OLD_ACTION_SUPPOR_CLASSPKG, Constants.NEW_ACTION_SUPPOR_CLASSPKG);
+				FileUtils.writeStringToFile(file2, fileString);;
 				CommonUtil.copyFile(destPackageAppPath, file2);
 			} else if(file2.getName().endsWith(".jsp")){
 				destPackageAppPath = outputAppPath + "/src/" + Constants.JSP_PATH;

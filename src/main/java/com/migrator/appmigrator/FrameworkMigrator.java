@@ -33,10 +33,12 @@ public class FrameworkMigrator extends JFrame {
 	private void initComponents() {
 		setTitle("Framework Migrator");
 
+		JPanel configPanel = new JPanel(new GridBagLayout());
+
 		comboLabel = new JLabel("Select number of projects to migrate:");
 		valueList = new JComboBox();
 
-		outputPathLabel = new JLabel("Output project path:");
+		outputPathLabel = new JLabel("Migrated project path:");
 		outputPathField = new JTextField();
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -46,32 +48,35 @@ public class FrameworkMigrator extends JFrame {
 		gridBagConstraints.gridy = 1;
 		gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
 		gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-		getContentPane().add(comboLabel, gridBagConstraints);
+		configPanel.add(comboLabel, gridBagConstraints);
 
-		String [] options = new String[] { "Choose...", "1" ,"2", "3", "4", "5" };
+		String [] options = new String[] { "Choose...", "1" ,"2", "3", "4", "5",
+											"6", "7","8","9","10"};
+
 		valueList.setModel(new javax.swing.DefaultComboBoxModel(options));
 		gridBagConstraints = new java.awt.GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 1;
 		gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
 		gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-		getContentPane().add(valueList, gridBagConstraints);
+		configPanel.add(valueList, gridBagConstraints);
 
 		gridBagConstraints = new java.awt.GridBagConstraints();
 		gridBagConstraints.gridy = 2;
 		gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
 		gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-		getContentPane().add(outputPathLabel, gridBagConstraints);
+		configPanel.add(outputPathLabel, gridBagConstraints);
 
 		outputPathField.setColumns(20);
 		gridBagConstraints = new java.awt.GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 2;
 		gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-		getContentPane().add(outputPathField, gridBagConstraints);
+		configPanel.add(outputPathField, gridBagConstraints);
 
 		ClassLoader cldr = FrameworkMigrator.class.getClassLoader();
-		URL url= cldr.getResource("images/folder.png");
+		URL url = cldr.getResource("images/folder.png");
+
 		JButton outputButton = new JButton();
 		if(null != url)
 		outputButton.setIcon(new ImageIcon(url));
@@ -80,7 +85,7 @@ public class FrameworkMigrator extends JFrame {
 		gridBagConstraints.gridy = 2;
 		gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
 		gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-		getContentPane().add(outputButton, gridBagConstraints);
+		configPanel.add(outputButton, gridBagConstraints);
 		outputButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -95,14 +100,25 @@ public class FrameworkMigrator extends JFrame {
 			}
 		});
 
-
 		JButton entriesButton = new JButton("Create Entries");
 		gridBagConstraints = new java.awt.GridBagConstraints();
 		gridBagConstraints.gridx = 0;
 		gridBagConstraints.gridy = 3;
 		gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
 		gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-		getContentPane().add(entriesButton, gridBagConstraints);
+		configPanel.add(entriesButton, gridBagConstraints);
+		configPanel.setBorder(BorderFactory.createTitledBorder("Project Configuration"));
+
+		gridBagConstraints = new java.awt.GridBagConstraints();
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.gridy = 0;
+		gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
+		gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+		getContentPane().add(configPanel, gridBagConstraints);
+
+		JPanel migratePanel = new JPanel(new GridBagLayout());
+		JPanel inputPanel = new JPanel(new GridBagLayout());
+		inputPanel.setBorder(BorderFactory.createTitledBorder("Project input settings"));
 
 		entriesButton.addActionListener(new ActionListener() {
 			@Override
@@ -114,7 +130,7 @@ public class FrameworkMigrator extends JFrame {
 				int j=0;
 				for(int i=0;i < Integer.parseInt(value); i++) {
 
-					JLabel inputLabel = new JLabel("Input project path:");
+					JLabel inputLabel = new JLabel("Struts project path "+(i+1)+":                                ");
 					JTextField field = new JTextField();
 					field.putClientProperty("id", "id"+i);
 					inputFields.add(field);
@@ -126,24 +142,24 @@ public class FrameworkMigrator extends JFrame {
 
 					gridBagConstraints = new java.awt.GridBagConstraints();
 					gridBagConstraints.gridx = 0;
-					gridBagConstraints.gridy = (i+4);
+					gridBagConstraints.gridy = (i+5);
 					gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
-					gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-					getContentPane().add(inputLabel, gridBagConstraints);
+					gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 0);
+					inputPanel.add(inputLabel, gridBagConstraints);
 
 					field.setColumns(20);
 					gridBagConstraints = new java.awt.GridBagConstraints();
 					gridBagConstraints.gridx = 1;
-					gridBagConstraints.gridy = (i+4);
-					gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-					getContentPane().add(field, gridBagConstraints);
+					gridBagConstraints.gridy = (i+5);
+					gridBagConstraints.insets = new java.awt.Insets(-4, 0, 0, 0);
+					inputPanel.add(field, gridBagConstraints);
 
 					gridBagConstraints = new java.awt.GridBagConstraints();
 					gridBagConstraints.gridx = 2;
-					gridBagConstraints.gridy = (i+4);
+					gridBagConstraints.gridy = (i+5);
 					gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
-					gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-					getContentPane().add(inputButton, gridBagConstraints);
+					gridBagConstraints.insets = new java.awt.Insets(-4, 0, 0, 0);
+					inputPanel.add(inputButton, gridBagConstraints);
 					inputButton.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -161,10 +177,10 @@ public class FrameworkMigrator extends JFrame {
 						JButton migrateButton = new JButton("Migrate");
 						gridBagConstraints = new java.awt.GridBagConstraints();
 						gridBagConstraints.gridx = 0;
-						gridBagConstraints.gridy = i+5;
+						gridBagConstraints.gridy = i+6;
 						gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
 						gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
-						getContentPane().add(migrateButton, gridBagConstraints);
+						migratePanel.add(migrateButton, gridBagConstraints);
 						migrateButton.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
@@ -173,19 +189,31 @@ public class FrameworkMigrator extends JFrame {
 									String inputPath = field.getText();
 									String newPath = outputPathField.getText();
 
-									if (StringUtils.isNotBlank(inputPath)
-											&& StringUtils.isNotBlank(newPath)) {
-										process(newPath, inputPath);
-									}
+                                    if (StringUtils.isNotBlank(inputPath)
+                                            && StringUtils.isNotBlank(newPath)) {
+                                        process(newPath, inputPath);
+                                    }
 								}
 							}
 						});
 					}
 				}
+				gridBagConstraints = new java.awt.GridBagConstraints();
+				gridBagConstraints.gridx = 0;
+				gridBagConstraints.gridy = 1;
+				gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
+				gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+				getContentPane().add(inputPanel, gridBagConstraints);
+
+				gridBagConstraints = new java.awt.GridBagConstraints();
+				gridBagConstraints.gridx = 0;
+				gridBagConstraints.gridy = 2;
+				gridBagConstraints.anchor = java.awt.GridBagConstraints.BASELINE_LEADING;
+				gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
+				getContentPane().add(migratePanel, gridBagConstraints);
 				pack();
 			}
 		});
-
 		pack();
 	}
 

@@ -8,8 +8,10 @@ public class Constants {
     public static String CSS_RESOURCE_PATH = "main/resources/static/css";
     public static String STATIC_PATH = "main/resources/static";
     public static String APPROP_RESOURCE_PATH = "main/resources";
-    public static String JSP_PATH = "main/webapp/WEB-INF/jsp";
+    public static String JSP_PATH = "main/webapp/WEB-INF";
     public static String WEBXML_PATH = "main/webapp/WEB-INF";
     public static String SPRING_LISTENER = "org.springframework.web.context.ContextLoaderListener";
-
+    public static String OLD_ACTION_SUPPOR_CLASSPKG = "com.opensymphony.xwork2";
+    public static String NEW_ACTION_SUPPOR_CLASSPKG = "org.springframework.web.struts";
+    public static String NEW_CLASS_PKG = "com.hack";
 }
